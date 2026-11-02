@@ -4,6 +4,7 @@ import Card from '../common/Card';
 import Badge from '../common/Badge';
 import { useBanking } from '../../context/BankingContext';
 import { transactionCategories } from '../../data/mockTransactions';
+import { ThreeCategoryAvatar } from '../three/ThreeTransactionFlow';
 
 export default function RecentTransactionsWidget({ limit = 6, showFilters = true }) {
   const { transactions, setActiveTab, formatINR } = useBanking();
@@ -112,11 +113,9 @@ export default function RecentTransactionsWidget({ limit = 6, showFilters = true
                 key={tx.id}
                 className="py-3.5 flex items-center justify-between gap-4 hover:bg-white/[0.02] px-2 rounded-xl transition-colors group"
               >
-                {/* Left: Avatar + Details */}
+                {/* Left: 3D Category Avatar + Details */}
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-10 h-10 rounded-xl bg-slate-900/80 border border-white/5 flex items-center justify-center text-lg shrink-0 group-hover:scale-105 transition-transform">
-                    {tx.avatar || '💳'}
-                  </div>
+                  <ThreeCategoryAvatar category={tx.category} avatar={tx.avatar} />
                   <div className="min-w-0">
                     <p className="font-semibold text-xs sm:text-sm text-white group-hover:text-cyan-300 transition-colors truncate">
                       {tx.name}

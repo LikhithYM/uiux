@@ -15,6 +15,7 @@ import {
 import AnimatedCounter from '../common/AnimatedCounter';
 import Button from '../common/Button';
 import { useBanking } from '../../context/BankingContext';
+import ThreeFinancialHeroAsset from '../three/ThreeFinancialAssets';
 
 export default function HeroBalance() {
   const {
@@ -80,6 +81,14 @@ export default function HeroBalance() {
               </p>
             </div>
           </div>
+        </div>
+
+        {/* 3D Floating Sovereign Financial Asset */}
+        <div className="hidden xl:flex flex-col items-center justify-center shrink-0 w-44">
+          <ThreeFinancialHeroAsset symbol="₹" height={130} />
+          <span className="text-[10px] font-mono uppercase tracking-wider text-cyan-400/80 -mt-2">
+            Quantum Sovereign Mint
+          </span>
         </div>
 
         {/* Quick Action Button Group */}

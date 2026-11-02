@@ -16,6 +16,7 @@ import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
 import Modal from '../components/common/Modal';
 import ThreeAssetOrb from '../components/three/ThreeAssetOrb';
+import ThreePortfolioVisualization from '../components/three/ThreePortfolioVisualization';
 import InvestmentPerformanceChart from '../components/charts/InvestmentPerformanceChart';
 import MiniSparkline from '../components/charts/MiniSparkline';
 import AnimatedCounter from '../components/common/AnimatedCounter';
@@ -27,6 +28,7 @@ export default function Investments() {
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [tradeType, setTradeType] = useState('buy'); // 'buy' or 'sell'
   const [tradeAmount, setTradeAmount] = useState('');
+  const [portfolioView, setPortfolioView] = useState('3d-allocation');
 
   const handleTradeSubmit = (e) => {
     e.preventDefault();
@@ -134,22 +136,49 @@ export default function Investments() {
           </Card>
         </div>
 
-        {/* Right 3D Visualizer: Holographic Wealth Orb */}
+        {/* Right 3D Visualizer: 3D Portfolio Allocation & Holographic Wealth Orb */}
         <div className="lg:col-span-5">
           <Card className="p-6 h-full flex flex-col justify-between items-center text-center relative overflow-hidden" glow>
-            <div className="w-full flex justify-between items-center">
-              <span className="text-xs uppercase font-bold tracking-wider text-cyan-400">
-                Quantum Asset Orb
-              </span>
-              <Badge variant="cyan" size="xs">Live Orbit</Badge>
+            <div className="w-full flex justify-between items-center mb-2">
+              <div className="flex items-center gap-1.5 bg-slate-900/60 p-1 rounded-xl border border-white/5">
+                <button
+                  onClick={() => setPortfolioView('3d-allocation')}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                    portfolioView === '3d-allocation'
+                      ? 'bg-cyan-500 text-black shadow-glow-cyan'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  3D Allocation
+                </button>
+                <button
+                  onClick={() => setPortfolioView('orb')}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                    portfolioView === 'orb'
+                      ? 'bg-cyan-500 text-black shadow-glow-cyan'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  Quantum Orb
+                </button>
+              </div>
+              <Badge variant="cyan" size="xs">Interactive 3D</Badge>
             </div>
 
             <div className="w-full my-auto">
-              <ThreeAssetOrb height={250} />
+              {portfolioView === '3d-allocation' ? (
+                <ThreePortfolioVisualization height={250} />
+              ) : (
+                <ThreeAssetOrb height={250} />
+              )}
             </div>
 
             <div className="w-full pt-4 border-t border-white/5 text-xs text-slate-400">
-              <p>Holographic asset distribution reflecting diversified cryptographic liquidity.</p>
+              <p>
+                {portfolioView === '3d-allocation'
+                  ? 'Interactive 3D asset allocation — Hover extruded sectors to inspect valuations and weights.'
+                  : 'Holographic asset distribution reflecting diversified cryptographic liquidity.'}
+              </p>
             </div>
           </Card>
         </div>

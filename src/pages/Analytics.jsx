@@ -24,6 +24,7 @@ import {
 import Card from '../components/common/Card';
 import CashFlowChart from '../components/charts/CashFlowChart';
 import CategoryPieChart from '../components/charts/CategoryPieChart';
+import Three3DBarChart from '../components/three/Three3DBarChart';
 import Badge from '../components/common/Badge';
 import { useBanking } from '../context/BankingContext';
 import {
@@ -35,6 +36,7 @@ import {
 export default function Analytics() {
   const { theme, formatINR } = useBanking();
   const isDark = theme === 'dark';
+  const [barViewMode, setBarViewMode] = useState('3d');
 
   const categoryIcons = {
     Shopping: ShoppingBag,
@@ -163,48 +165,76 @@ export default function Analytics() {
         {/* Weekly Day-by-Day Burn Intensity */}
         <Card className="p-6 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
               <div>
                 <h3 className="font-display font-bold text-lg text-white">
                   Intra-Week Spending Intensity
                 </h3>
                 <p className="text-xs text-slate-400">Expenditure pattern across days of the week</p>
               </div>
-              <span className="text-xs font-mono text-cyan-400 font-semibold bg-cyan-500/10 px-2.5 py-1 rounded-full border border-cyan-500/20">
-                Peak: Saturday
-              </span>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 bg-slate-900/60 p-0.5 rounded-lg border border-white/5 text-[10px]">
+                  <button
+                    onClick={() => setBarViewMode('3d')}
+                    className={`px-2 py-0.5 rounded-md font-semibold transition-all ${
+                      barViewMode === '3d'
+                        ? 'bg-cyan-500 text-black shadow-glow-cyan'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    3D Bars
+                  </button>
+                  <button
+                    onClick={() => setBarViewMode('2d')}
+                    className={`px-2 py-0.5 rounded-md font-semibold transition-all ${
+                      barViewMode === '2d'
+                        ? 'bg-cyan-500 text-black shadow-glow-cyan'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    2D Flat
+                  </button>
+                </div>
+                <span className="text-xs font-mono text-cyan-400 font-semibold bg-cyan-500/10 px-2.5 py-1 rounded-full border border-cyan-500/20">
+                  Peak: Saturday
+                </span>
+              </div>
             </div>
 
             <div style={{ width: '100%', height: 260 }}>
-              <ResponsiveContainer>
-                <BarChart data={weeklySpendingData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke={isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'}
-                    vertical={false}
-                  />
-                  <XAxis
-                    dataKey="day"
-                    stroke={isDark ? '#64748b' : '#94a3b8'}
-                    fontSize={11}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    stroke={isDark ? '#64748b' : '#94a3b8'}
-                    fontSize={11}
-                    tickLine={false}
-                    axisLine={false}
-                    tickFormatter={(v) => `₹${v / 1000}k`}
-                  />
-                  <Tooltip content={<CustomBarTooltip />} />
-                  <Bar
-                    dataKey="amount"
-                    fill="#00F0FF"
-                    radius={[6, 6, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+              {barViewMode === '3d' ? (
+                <Three3DBarChart height={260} />
+              ) : (
+                <ResponsiveContainer>
+                  <BarChart data={weeklySpendingData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke={isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'}
+                      vertical={false}
+                    />
+                    <XAxis
+                      dataKey="day"
+                      stroke={isDark ? '#64748b' : '#94a3b8'}
+                      fontSize={11}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis
+                      stroke={isDark ? '#64748b' : '#94a3b8'}
+                      fontSize={11}
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={(v) => `₹${v / 1000}k`}
+                    />
+                    <Tooltip content={<CustomBarTooltip />} />
+                    <Bar
+                      dataKey="amount"
+                      fill="#00F0FF"
+                      radius={[6, 6, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </div>
 

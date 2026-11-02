@@ -15,6 +15,7 @@ import Button from '../components/common/Button';
 import Badge from '../components/common/Badge';
 import AnimatedCounter from '../components/common/AnimatedCounter';
 import { useBanking } from '../context/BankingContext';
+import ThreeFinancialHeroAsset from '../components/three/ThreeFinancialAssets';
 
 export default function Wallet() {
   const {
@@ -149,6 +150,11 @@ export default function Wallet() {
               <p className="text-xs text-slate-400 leading-relaxed mb-4">
                 Your wallet is secured by hardware security modules and multi-signatory quantum cryptographic protocols.
               </p>
+
+              {/* 3D Floating Sovereign Escrow Coin & Token */}
+              <div className="my-2">
+                <ThreeFinancialHeroAsset symbol="₹" height={105} />
+              </div>
 
               <div className="space-y-2 text-xs">
                 <div className="flex justify-between py-1.5 border-b border-white/5">

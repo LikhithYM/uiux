@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TrendingUp, ArrowUpRight, ShieldCheck, ChevronRight, PieChart } from 'lucide-react';
 import Card from '../common/Card';
 import MiniSparkline from '../charts/MiniSparkline';
 import { useBanking } from '../../context/BankingContext';
+import ThreePortfolioVisualization from '../three/ThreePortfolioVisualization';
 
 export default function InvestmentOverviewWidget() {
   const { portfolio, setActiveTab, formatINR } = useBanking();
+  const [show3D, setShow3D] = useState(false);
 
   return (
     <Card className="p-6">
@@ -44,21 +46,34 @@ export default function InvestmentOverviewWidget() {
         </div>
       </div>
 
-      {/* Asset Allocation Mini Progress Bar */}
+      {/* Asset Allocation Mini Progress Bar & 3D Visualizer */}
       <div className="mb-4">
-        <div className="flex justify-between text-xs text-slate-400 mb-1.5 font-medium">
+        <div className="flex justify-between items-center text-xs text-slate-400 mb-2 font-medium">
           <span>Asset Allocation</span>
-          <span>4 Asset Classes</span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShow3D((prev) => !prev)}
+              className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 hover:bg-cyan-500/20 transition-colors"
+            >
+              {show3D ? '2D Bar' : '3D Orbit'}
+            </button>
+            <span>4 Asset Classes</span>
+          </div>
         </div>
-        <div className="flex h-2.5 rounded-full overflow-hidden bg-slate-800">
-          {portfolio.categories.map((c) => (
-            <div
-              key={c.name}
-              style={{ width: `${c.allocation}%`, backgroundColor: c.color }}
-              title={`${c.name}: ${c.allocation}%`}
-            />
-          ))}
-        </div>
+
+        {show3D ? (
+          <ThreePortfolioVisualization height={160} />
+        ) : (
+          <div className="flex h-2.5 rounded-full overflow-hidden bg-slate-800">
+            {portfolio.categories.map((c) => (
+              <div
+                key={c.name}
+                style={{ width: `${c.allocation}%`, backgroundColor: c.color }}
+                title={`${c.name}: ${c.allocation}%`}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Holdings List (Top 3) */}

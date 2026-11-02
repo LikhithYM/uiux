@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { categoryExpensesData } from '../../data/mockAnalytics';
 import { useBanking } from '../../context/BankingContext';
+import Three3DDonutChart from '../three/Three3DDonutChart';
 
 export default function CategoryPieChart({ height = 240 }) {
   const { formatINR } = useBanking();
+  const [viewMode, setViewMode] = useState('3d'); // default to 3D for upgraded experience!
   const total = categoryExpensesData.reduce((acc, curr) => acc + curr.value, 0);
 
   const CustomPieTooltip = ({ active, payload }) => {
@@ -22,30 +24,60 @@ export default function CategoryPieChart({ height = 240 }) {
 
   return (
     <div className="w-full flex flex-col items-center">
-      <div style={{ width: '100%', height }} className="relative">
-        <ResponsiveContainer>
-          <PieChart>
-            <Tooltip content={<CustomPieTooltip />} />
-            <Pie
-              data={categoryExpensesData}
-              innerRadius={65}
-              outerRadius={88}
-              paddingAngle={4}
-              dataKey="value"
-              stroke="transparent"
-            >
-              {categoryExpensesData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Pie>
-          </PieChart>
-        </ResponsiveContainer>
+      {/* 2D vs 3D View Mode Toggle */}
+      <div className="self-end mb-2 flex items-center gap-1 bg-slate-900/60 p-0.5 rounded-lg border border-white/5 text-[10px]">
+        <button
+          onClick={() => setViewMode('3d')}
+          className={`px-2 py-0.5 rounded-md font-semibold transition-all ${
+            viewMode === '3d'
+              ? 'bg-cyan-500 text-black shadow-glow-cyan'
+              : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          3D Donut
+        </button>
+        <button
+          onClick={() => setViewMode('2d')}
+          className={`px-2 py-0.5 rounded-md font-semibold transition-all ${
+            viewMode === '2d'
+              ? 'bg-cyan-500 text-black shadow-glow-cyan'
+              : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          2D Flat
+        </button>
+      </div>
 
-        {/* Center Text */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <span className="text-[11px] text-slate-400 font-medium">Total Spent</span>
-          <span className="text-base font-bold text-white font-mono">{formatINR(total)}</span>
-        </div>
+      <div style={{ width: '100%', height }} className="relative">
+        {viewMode === '3d' ? (
+          <Three3DDonutChart height={height} />
+        ) : (
+          <>
+            <ResponsiveContainer>
+              <PieChart>
+                <Tooltip content={<CustomPieTooltip />} />
+                <Pie
+                  data={categoryExpensesData}
+                  innerRadius={65}
+                  outerRadius={88}
+                  paddingAngle={4}
+                  dataKey="value"
+                  stroke="transparent"
+                >
+                  {categoryExpensesData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+
+            {/* Center Text */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <span className="text-[11px] text-slate-400 font-medium">Total Spent</span>
+              <span className="text-base font-bold text-white font-mono">{formatINR(total)}</span>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Legend Grid */}

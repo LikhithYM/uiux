@@ -1,11 +1,16 @@
-import React from 'react';
-import { Target, Car, Plane, ShieldCheck, Cpu, Plus, Sparkles, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Target, Car, Plane, ShieldCheck, Cpu, Plus, Sparkles, ChevronRight, Box } from 'lucide-react';
 import Card from '../common/Card';
 import Button from '../common/Button';
 import { useBanking } from '../../context/BankingContext';
+import ThreeSavingsVault from '../three/ThreeSavingsVault';
 
 export default function SavingsGoals() {
   const { savingsGoals, setActiveGoalModal, formatINR } = useBanking();
+  const [selectedGoalId, setSelectedGoalId] = useState(savingsGoals[0]?.id || 'goal-1');
+  const [show3DVault, setShow3DVault] = useState(true);
+
+  const activeGoal = savingsGoals.find((g) => g.id === selectedGoalId) || savingsGoals[0];
 
   const getIcon = (iconName) => {
     switch (iconName) {
@@ -22,24 +27,57 @@ export default function SavingsGoals() {
 
   return (
     <Card className="p-6">
-      <div className="flex items-center justify-between mb-5">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
         <div>
           <h3 className="font-display font-bold text-lg text-white">Savings Vaults & Goals</h3>
-          <p className="text-xs text-slate-400">Automated capital lock-in & yield growth</p>
+          <p className="text-xs text-slate-400">Automated capital lock-in & 3D yield vaults</p>
         </div>
-        <span className="text-xs font-semibold text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-full border border-cyan-500/20">
-          {savingsGoals.length} Active Vaults
-        </span>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShow3DVault((prev) => !prev)}
+            className="flex items-center gap-1.5 text-xs font-semibold text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-full border border-cyan-500/20 hover:bg-cyan-500/20 transition-colors"
+          >
+            <Box size={13} />
+            <span>{show3DVault ? 'Hide 3D Vault' : '3D Vault View'}</span>
+          </button>
+          <span className="text-xs font-semibold text-slate-300 bg-slate-900/60 px-2.5 py-1 rounded-full border border-white/5">
+            {savingsGoals.length} Active Vaults
+          </span>
+        </div>
       </div>
 
+      {/* Featured 3D Interactive Vault Canvas */}
+      {show3DVault && (
+        <div className="mb-5 p-4 rounded-2xl bg-slate-900/50 border border-white/5 relative overflow-hidden">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs uppercase font-bold tracking-wider text-cyan-400">
+              3D Quantum Reserve Vault — {activeGoal?.name}
+            </span>
+            <span className="text-[11px] font-mono text-slate-400">
+              Click any goal card below to inspect its 3D vault
+            </span>
+          </div>
+
+          <ThreeSavingsVault goal={activeGoal} height={210} />
+        </div>
+      )}
+
+      {/* Goal Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {savingsGoals.map((goal) => {
           const progress = Math.min(100, Math.round((goal.currentAmount / goal.targetAmount) * 100));
+          const isSelected = goal.id === activeGoal?.id;
 
           return (
             <div
               key={goal.id}
-              className="p-4 rounded-xl bg-slate-900/40 hover:bg-slate-900/60 border border-white/5 hover:border-cyan-500/30 transition-all flex flex-col justify-between group"
+              onClick={() => setSelectedGoalId(goal.id)}
+              className={`p-4 rounded-xl cursor-pointer transition-all flex flex-col justify-between group border ${
+                isSelected
+                  ? 'bg-slate-900/80 border-cyan-500/50 shadow-glow-cyan'
+                  : 'bg-slate-900/40 hover:bg-slate-900/60 border-white/5 hover:border-cyan-500/30'
+              }`}
             >
               <div>
                 <div className="flex items-start justify-between">
@@ -85,7 +123,10 @@ export default function SavingsGoals() {
               <div className="pt-3 mt-3 border-t border-white/5 flex items-center justify-between">
                 <span className="text-[11px] text-slate-400">Target: {goal.deadline}</span>
                 <button
-                  onClick={() => setActiveGoalModal(goal)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveGoalModal(goal);
+                  }}
                   className="text-xs text-cyan-400 hover:text-cyan-300 font-medium flex items-center gap-1 hover:translate-x-0.5 transition-transform"
                 >
                   <span>Deposit Funds</span>

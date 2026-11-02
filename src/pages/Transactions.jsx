@@ -19,6 +19,7 @@ import Badge from '../components/common/Badge';
 import Modal from '../components/common/Modal';
 import { useBanking } from '../context/BankingContext';
 import { transactionCategories } from '../data/mockTransactions';
+import ThreeTransactionFlowBanner, { ThreeCategoryAvatar } from '../components/three/ThreeTransactionFlow';
 
 export default function Transactions() {
   const { transactions, formatINR, showToast } = useBanking();
@@ -95,6 +96,9 @@ export default function Transactions() {
           Export CSV Ledger
         </Button>
       </div>
+
+      {/* 3D Quantum Ledger Pipeline Banner */}
+      <ThreeTransactionFlowBanner />
 
       {/* Filter and Search Bar */}
       <Card className="p-4 sm:p-5">
@@ -184,9 +188,7 @@ export default function Transactions() {
                     >
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-3">
-                          <span className="w-9 h-9 rounded-xl bg-slate-900 flex items-center justify-center text-base shrink-0 border border-white/5">
-                            {tx.avatar || '💳'}
-                          </span>
+                          <ThreeCategoryAvatar category={tx.category} avatar={tx.avatar} />
                           <div>
                             <p className="font-semibold text-white group-hover:text-cyan-300">
                               {tx.name}
